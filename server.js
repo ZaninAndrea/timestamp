@@ -5,24 +5,23 @@
 var express = require('express');
 var app = express();
 app.get('/*', function (req, res) {
-  var response={error:"error"};
+  var response={"unix":null,"natural":null};
   var d;
   var months=["January","February","March","April","May","June","July","August","September","October","November","December"];
   try {
     d = new Date(Date.parse(req.url.replace(/%20/g," ").substring(1)));
+    if(d.getTime()>0){
+      response={"natural":months[d.getMonth()]+" "+d.getDate()+", "+d.getFullYear(),"unix":+ d};
+    }
   }  catch(err) {  }
   try {
     if (parseInt(req.url.substring(1))){
       var time=parseInt(req.url.substring(1));
       d = new Date(time*1000);
+      response={"natural":months[d.getMonth()]+" "+d.getDate()+", "+d.getFullYear(),"unix":+ d};
     }
   }  catch(err) {  }
   
-  if (d!==null && d.toString!=="Invalid Date"){
-    response={"natural":months[d.getMonth()]+" "+d.getDate()+", "+d.getFullYear(),"unix":+ d};
-  }else{
-    response={"unix":null,"natural":null};
-  }
   res.send(JSON.stringify(response));
 })
 
